@@ -1,11 +1,25 @@
 <html>
     <head> </head>
     <body>
-        <div id ="population">
-        </div>
+        <h1><span id ="title"></span></h1>
+        <h2>Target: <input type"text" id ="target" value ="hello" /></h2>
+        <h2>Population count: <input type="text" id="population-size" value="50" /></h2>
+        <h2>Mutation Rate: <input type="text" id="mutation-rate" value="0.1" /></h2>
+        <button id="startIterator">Start</button>
+        <button id="stopIterator">Stop</button>
+        <span id="status"></span>
+        <h3>Generation: <span id="generation"></span></h3>
+        <h3>Best gene: <span id="best-gene"></span></h3>
+        <table id="population-table" width="400">
+            <thead>
+                <td width="300">Code</td><td width="100">Cost</td>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
     </body>
     <script src="./bower_components/underscore/underscore-min.js"></script>
-    <script src="./bower_components/jquery-3.3.1.min/index.js"></script>
     <script src="./lib.js"></script>
+    <script src="./bower_components/jquery-3.3.1.min/index.js"></script>
     <script src="./app.js"></script>
 </html>

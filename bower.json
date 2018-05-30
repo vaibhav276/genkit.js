@@ -1,5 +1,5 @@
 {
-  "name": "gen.js",
+  "name": "genkit.js",
   "authors": [
     "Vaibhav Pujari <vaibhav276@yahoo.co.in>"
   ],
@@ -7,7 +7,7 @@
   "main": "lib.js",
   "license": "MIT",
   "homepage": "",
-  "private": true,
+  "private": false,
   "ignore": [
     "**/.*",
     "node_modules",

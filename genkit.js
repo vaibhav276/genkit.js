@@ -1,12 +1,30 @@
 /* Requires: underscore.js */
 
 var GenKit = function(config) {
+   'use strict';
 
    this.dnaCodes = config.dnaCodes; // The dna codes
-   this.error = config.error; // The error function to tell us distance between two dna codes
+   // NOTE: Either cost or fitness is required for scoring
+   // If both are provided, we prefer cost function
+   this.evalType = config.evalType;
+   if (this.evalType == 'cost') {
+      this.eval = config.eval; // The cost function to tell us distance between two genes
+   } else if (this.evalType == 'fitness'){
+      this.eval = config.eval; // The fitness function to tell how fit a gene is
+   } else {
+      return {
+         err: "Either 'cost' or 'fitness' function must be defined"
+      };
+   }
    this.mutate = config.mutate; // Mutation function for a dnaCode
    this.mate = config.mate;
    var theObj = this;
+
+   if (theObj.eval == undefined || theObj.eval == null) {
+      return {
+         err: "Either 'cost' or 'fitness' function must be defined"
+      };
+   }
 
    function getRandomInt(max) {
       return Math.floor(Math.random() * Math.floor(max));
@@ -16,6 +34,7 @@ var GenKit = function(config) {
    var Gene = function() {
       this.code = [];
       this.score = 0.0;
+      this.fitness = Number.MIN_SAFE_INTEGER;
       this.cost = Number.MAX_SAFE_INTEGER;
    };
    /** Generate a random gene sequence */
@@ -38,14 +57,6 @@ var GenKit = function(config) {
       res.code = theObj.mate(gene1.code, gene2.code);
       return res;
    }
-   /** Cost is sum of errors at each position
-    */
-   function calcCost(gene, target) {
-      var zipped = _.zip(gene.code, target.code);
-      return _.foldl(zipped, function(sum, a) {
-         return sum + (theObj.error(a[0],a[1]));
-      }, 0);
-   }
 
    /************* Population functions ***************/
    var Population = function(target) {
@@ -53,7 +64,7 @@ var GenKit = function(config) {
       this.target = new Gene();
       this.target.code = target;
       this.generation = 0;
-   }
+   };
    /** Generate a new random population
     *  Used for initialization
     */
@@ -69,18 +80,30 @@ var GenKit = function(config) {
    /** Calculate normalized (0-1) score from cost range of population
     */
    function score(population) {
-      var costedElements = _.map(population.elements, function(x) {
-         x.cost = calcCost(x, population.target);
-         return x;
-      });
-      var minCost = _.min(costedElements, function(x) { return x.cost; });
-      var maxCost = _.max(costedElements, function(x) { return x.cost; });
-      var range = maxCost.cost - minCost.cost;
-      if (range == 0) range = 1; // Prevent divide by 0 - all elements are same
-      var scoredElements = _.map(population.elements, function (x) {
-         x.score = 1.0 - ( (x.cost - minCost.cost) / range );
-         return x;
-      });
+      var scoredElements = null;
+      if (theObj.evalType == 'cost') {
+         var costedElements = _.map(population.elements, function(x) {
+            x.cost = theObj.eval(x.code);
+            return x;
+         });
+         var minCost = _.min(costedElements, function(x) { return x.cost; });
+         var maxCost = _.max(costedElements, function(x) { return x.cost; });
+         var range = maxCost.cost - minCost.cost;
+         if (range == 0) range = 1; // Prevent divide by 0 - all elements are same
+         scoredElements = _.map(population.elements, function (x) {
+            x.score = 1.0 - ( (x.cost - minCost.cost) / range );
+            return x;
+         });
+      } else if (theObj.evalType == 'fitness'){
+         scoredElements = _.map(population.elements, function(x) {
+            x.fitness = theObj.eval(x.code);
+            x.score = x.fitness;
+            return x;
+         });
+      }
+      if (scoredElements == null) {
+         // TODO: Error case
+      }
 
       var res = population;
       res.elements = scoredElements;
@@ -133,10 +156,11 @@ var GenKit = function(config) {
     */
    function topGene(population) {
       // NOTE: population must be scored already
-      return _.min(population.elements, function(x) { return x.cost; });
+      return _.max(population.elements, function(x) { return x.score; });
    }
 
    return {
+      err: null,
       randomPopulation: randomPopulation,
       evolve: evolve,
       score: score,

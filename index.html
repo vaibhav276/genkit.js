@@ -5,15 +5,23 @@
         <h2>Target: <input type"text" id ="target" value ="hello" /></h2>
         <h2>Population count: <input type="text" id="population-size" value="50" /></h2>
         <h2>Mutation Rate: <input type="text" id="mutation-rate" value="0.1" /></h2>
+        <h2>Scoring:</h2>
+        <input type="radio" id="radio-eval-cost" name="eval" value="cost" checked><label for="cost"> Cost based (distance = squared error) </label><br>
+        <input type="radio" id="radio-eval-fitness" name="eval" value="fitness"><label for="fitness"> Fitness based (distance = binary) </label><br><br>
+        <h2>Mutation:</h2>
+        <input type="radio" id="radio-mutation-updown" name="mutation" value="updown" checked><label for="updown"> Up-down </label><br>
+        <input type="radio" id="radio-mutation-random" name="mutation" value="random"><label for="fitness"> Random </label><br><br>
+        <h2>Step duration: <input id="step-duration" type="text" value="1"/> ms</h2>
         <button id="startIterator">Start</button>
         <button id="stopIterator">Stop</button>
         <span id="status"></span>
         <h3>Generation: <span id="generation"></span></h3>
         <h3>Best gene: <span id="best-gene"></span></h3>
         <h4>Best gene cost: <span id="best-gene-cost"></span></h4>
+        <h4>Best gene fitness: <span id="best-gene-fitness"></span></h4>
         <table id="population-table" width="400">
             <thead>
-                <td width="300">Code</td><td width="100">Cost</td>
+                <td width="300">Code</td><td width="100">Score</td>
             </thead>
             <tbody>
             </tbody>

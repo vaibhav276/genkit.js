@@ -1,4 +1,7 @@
 $(function() {
+   $('form').submit(false);
+   $(".fullscreen.modal").modal("hide");
+
    var p;
    var it;
    var mutRate;
@@ -96,5 +99,9 @@ $(function() {
          }
       }
    }
+
+   $("#show-population").click(function() {
+      $(".fullscreen.modal").modal("show");
+   });
 
 });

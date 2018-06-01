@@ -1,7 +1,5 @@
 ## Dependencies:
-- [node](https://nodejs.org/)
-- [bower](https://bower.io/)
+- underscore.js
 
-## Installation:
-- `bower install`
-- Open index.html in browser
+## Demo
+- Open demo1/index.html in browser
